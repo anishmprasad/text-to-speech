@@ -1,0 +1,389 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+<head>
+
+  <title>Text-to-Speech</title>
+  <meta name="description" content="Try SitePal's talking avatars with our free Text to Speech online demo. Our virtual characters read text aloud naturally in over 25 languages. Use our text to speach (txt 2  speech) tool to test speech voices. No speaking software needed">
+  <meta name="keyword" content="speech to speech, text to speech, text to speach, text for speech, txt 2 speech, TTS, voice changer, read text, speech online, speech software, textaloud, text aloud, natural reader, voice software, speaking software, online avatar, demo, free, SitePal, "
+  />
+  <meta http-equiv="content-type" CONTENT="text/html; charset=utf-8" />
+
+  <script language="JavaScript" type="text/javascript" src="http://www.sitepal.com/scripts/cookieUtils.js"></script>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <script language="JavaScript" type="text/javascript" src="./js/ttsJS.js"></script>
+
+  <script language="javascript" type="text/javascript">
+    //window.onload = Init;
+    var speechLimit = 19;  // total allowances minus 1 (for 10 plays, put 9)
+    var fromOddcast = /^http:\/\/.*(oddcast\.com|sitepal\.com)/i.test(document.referrer);
+    /*
+    if ((parseInt(readCookie('speeches')) > speechLimit) && !fromOddcast) 
+      location.replace('tts_example_limit.html?' + location.search.substring(1));
+      //location.replace('tts_example_limit.html' + location.search);
+    */
+    $(document).ready(function () {
+      Init();
+      // var oldMaleFemaleChar=(mf[document.newaudio.voice.value]=='F') ? '1': '2';
+
+      var previousValue;
+      var previousValueLanguage;
+
+      $(".mySelect").focus(function () {
+        previousValue = this.value;
+      }).change(function () {
+        checkMaleFemale(previousValue);
+        previousValue = this.value;
+      });
+      $(".mySelectLanguage").focus(function () {
+        previousValueLanguage = document.newaudio.voice.value;
+      }).change(function () {
+        //checkMaleFemale(previousValue);
+        console.log('language:' + previousValueLanguage);
+        ; setVoices(undefined, previousValueLanguage);
+        previousValueLanguage = document.newaudio.voice.value;
+      });
+
+    });
+    function Init() {
+      try {
+        IEsetup();
+        setTTSForm(1, 301003);
+      } catch (e) {
+        alert(e);
+      }
+    }
+
+    function IEsetup() {
+      if (!document.all)
+        return;
+      IE5 = navigator.appVersion.indexOf("5.") != -1;
+      if (!IE5) {
+        for (i = 0; i < document.forms.length; i++) {
+          document.forms[i].reset();
+        }
+      }
+    }
+  </script>
+
+  <style type="text/css">
+    <!--
+    /*global*/
+
+    body {
+      margin: 0px;
+    }
+
+    #omniture {
+      height: 1px;
+      overflow: hidden;
+      display: none;
+    }
+
+    #container {
+      /* width:426px; */
+      margin-top: 0px;
+    }
+
+    .header {
+      text-align: left;
+      width: 426px;
+      height: 40px;
+    }
+
+    .ttslogo {
+      float: left;
+      width: 248px;
+      height: 40px;
+      padding-left: 7px;
+    }
+
+    .logo2 {
+      float: left;
+      width: 171px;
+      height: 40px;
+    }
+
+    #flashcontainer {
+      /* width:426px;
+	height:314px; */
+      padding-top: 14px;
+      padding-left: 13px;
+      text-align: center;
+      margin: 0 auto;
+      display: inline-block;
+    }
+
+    #formcontainer {
+      width: 426px;
+      height: 106px;
+      text-align: left;
+    }
+
+    #vwContainer {
+      /*width:426px;*/
+      width: 468px;
+      text-align: center;
+      position: relative;
+      top: 20px;
+    }
+
+    #formcontainer form {
+      margin: 0;
+    }
+
+    #formcontainer #textToSay {
+      border: 1px solid #BDBCBF;
+      margin: 4px 0 0 16px;
+      width: 120px;
+    }
+
+    #formcontainer select {
+      border: 1px solid #BDBCBF;
+      margin: 4px 0 0 16px;
+      width: 110px
+    }
+
+    #formcontainer label {
+      display: block;
+      padding: 10px 0 0 16px;
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      font-style: italic;
+      font-size: 14px;
+      color: #FF7900;
+    }
+
+    .button {
+      margin: 12px 10px 0 0;
+    }
+
+    .tagline {
+      margin: 1px 0 6px 0;
+      font-family: Verdana, arial, helvetica, sans-serif;
+      font-size: 10px;
+      text-align: center;
+    }
+
+    .tagline a {
+      font-weight: bold;
+    }
+
+    .tagline a:hover {
+      text-decoration: none;
+    }
+
+    #tagSitepal,
+    #tagSitepal a {
+      color: #303F50;
+    }
+
+    #tagOddcast,
+    #tagOddcast a {
+      color: #4E4E4E;
+    }
+
+
+    /* Sitepal */
+
+    body.sitepal {
+      background: #bac9cf;
+    }
+
+    body.sitepal #flashcontainer {
+      background: url('images/tts_sitepal_flash_back.gif') no-repeat;
+    }
+
+    body.sitepal #formcontainer {
+      background: url('images/tts_sitepal_form_back.gif') no-repeat;
+    }
+
+    body.sitepal #oddcastHeader {
+      display: none;
+    }
+
+    body.sitepal #oddcastButton {
+      display: none;
+    }
+
+    body.sitepal #tagOddcast {
+      display: none;
+    }
+
+    /* Oddcast */
+
+    body.oddcast {
+      background: #e0e0e0;
+    }
+
+    body.oddcast #flashcontainer {
+      background: url('images/tts_oddcast_flash_back.gif') no-repeat;
+      ;
+    }
+
+    body.oddcast #formcontainer {
+      background: url('images/tts_oddcast_form_back.gif') no-repeat;
+      ;
+    }
+
+    body.oddcast #sitepalHeader {
+      display: none;
+    }
+
+    body.oddcast #sitepalButton {
+      display: none;
+    }
+
+    body.oddcast #tagSitepal {
+      display: none;
+    }
+
+    a#vw_link:link,
+    a#vw_link:visited,
+    a#vw_link:hover,
+    a#vw_link:active {
+      font-family: Verdana, arial, helvetica, sans-serif;
+      font-size: 12px;
+      color: #4E4E4E;
+      font-weight: bold;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div align="center">
+    <div id="container">
+
+      <h3>Text to Speech</h3>
+      <div id="flashcontainer">
+              <script type="text/javascript" src="//vhss-d.oddcast.com/vhost_embed_functions_v2.php?acc=XXXXXX&js=1"></script>
+              <script type="text/javascript">AC_VHost_Embed(XXXXX, 300, 400, '', 1, 1, XXXXX, 0, 0, 0, 'XXXXXXXXXXXXXXXXX', 0);</script>
+      </div>
+
+      <div id="formcontainer">
+        <form name="newaudio" accept-charset="UTF-8" onsubmit="return false;">
+          <table width="100%" cellPadding="0" cellSpacing="0" border="0">
+            <tr>
+              <td>
+                <label for="textToSay">Enter Text:</label>
+              </td>
+              <td>
+                <label for="lang">Language:</label>
+              </td>
+              <td>
+                <label for="voice">Voice:</label>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <input type="text" id="textToSay" name="textToSay" maxlength="180" />
+              </td>
+              <td>
+                <select id="lang" class="mySelectLanguage" name="lang">
+                  <option>Loading Languages...</option>
+                </select>
+              </td>
+              <td>
+                <select id="voice" class="mySelect" name="voice">
+                  <option>Loading Voices...</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label for="effect">Effect:</label>
+                <select id="effect" name="effect">
+                  <option value="none">none</option>
+                  <option value="P">Pitch</option>
+                  <option value="S">Speed</option>
+                  <option value="D">Duration</option>
+                  <option value="T">Echo</option>
+                  <option value="T">Reverb</option>
+                  <option value="T">Flanger</option>
+                  <option value="T">Phase</option>
+                  <option value="R">Bullhorn</option>
+                  <option value="W">Whisper</option>
+                </select>
+              </td>
+              <td>
+                <label for="level">Level:</label>
+                <select id="level" name="level"></select>
+              </td>
+              <td align="right">
+                <div class="button" id="sitepalButton">
+                  <input type="image" value="Say It!" class="sayButton" name="SayButton" src="http://www.oddcast.com/home/demos/tts/images/tts_oddcast_sayit.gif"
+                    onClick="DoAction(this.form.textToSay.value,this.form.effect.value);" />
+                </div>
+                <!-- <div class="button" id="oddcastButton"><input type="image" value="Say It!" class="sayButton" name="SayButton" src="http://www.oddcast.com/home/demos/tts/images/tts_oddcast_sayit.gif" onClick="DoAction(this.form.textToSay.value, this.form.effect.value);" /></div> -->
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+
+
+
+
+
+    </div>
+
+
+
+  </div>
+  <script>
+    if (location.search.indexOf('clients') != -1) {
+      //document.getElementById("tagOddcast").style.display = "none";
+      document.getElementById("oddcastLogo").getElementsByTagName('a')[0].href = "http://www.oddcast.com/";
+    }
+
+    function DoAction(sText, sEffect) {
+      console.log(sText)
+      debug("doaction() called");
+
+      if (sText.length < 1)
+        return;
+
+      speechCount = readCookie('speeches');
+      debug(speechCount);
+
+      /*if (speechCount == false)
+      {
+        debug('first time speech')
+        setCookie('speeches', 1, null, '/', 'oddcast.com');
+        previewTTSVoice(sText, sEffect);
+      }
+      else if (parseInt(speechCount) > speechLimit && !fromOddcast)
+      {
+        debug('passed speech limit')
+        location.replace('tts_example_limit.html?' + location.search.substring(1) + '&version=translation');
+        //location.replace('tts_example_limit.html' + location.search);
+      }
+      else
+      {
+        debug('not first time, but within limit')
+        speechCount = parseInt(speechCount);
+        speechCount++;
+        setCookie('speeches', speechCount, null, '/', 'oddcast.com');
+      */
+      previewTTSVoice(sText, sEffect);
+    }
+
+    function UpdateStatusImg(iStatus) {
+      var oImg = document.getElementById('StatusImg');
+      if (iStatus == 1)
+        oImg.style.visibility = 'visible';
+      else if (iStatus == 0)
+        oImg.style.visibility = 'hidden';
+    }
+
+    function debug(sText) {
+      //alert(sText);
+    }
+
+  </script>
+
+</body>
+
+</html>
